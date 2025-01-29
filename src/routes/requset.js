@@ -4,6 +4,7 @@ const reqRouter = express.Router()
 const {userAuth} =require('../middlewares/userAuth')
 const User = require('../model/userSchema')
 const { default: mongoose } = require('mongoose')
+const {sendNotification} = require("../utils/sendNoifications")
 
 
 reqRouter.post('/request/send/:status/:toUserID',userAuth,async(req,res)=>{
@@ -19,7 +20,6 @@ reqRouter.post('/request/send/:status/:toUserID',userAuth,async(req,res)=>{
         return res.status(400).send({message:"Invalid status received"})
      } 
      const toUser = await User.findById(receiverId)
-     console.log("touser ",toUser);
      if(!toUser){  
         return res.status(400).send({message:"user not found"})
      }
@@ -36,6 +36,14 @@ reqRouter.post('/request/send/:status/:toUserID',userAuth,async(req,res)=>{
       senderId,receiverId,status
      })
       const data =  await connectionRequest.save()
+       
+           if(status=="interested"){
+            const email = await sendNotification(toUser.emailId,status,user.firstName,user.lastName)
+           }
+  
+  
+    
+
       res.send({message:"Connection request send succesfully",data})
    }catch(err){
     res.status(400).send('ERROR:'+err.message)
@@ -48,6 +56,7 @@ reqRouter.post('/request/send/:status/:toUserID',userAuth,async(req,res)=>{
 reqRouter.post('/request/review/:status/:requestId',userAuth,async(req,res)=>{
 const{status,requestId} = req.params
 console.log(req.params);
+ 
  
 const loggedUser = req.user
 try{
@@ -66,7 +75,16 @@ const connection = await ConnectionRequestModel.findOne({
 if(!connection){
    return res.status(400).send({message:"connection wont find..."})
 }
-console.log(connection);
+const sender = await User.findById(connection.senderId)
+if (!sender) {
+   return res.status(400).send({ message: "Sender not found" });
+ }
+ const senderEmail = sender.emailId
+
+ 
+
+ sendNotification(senderEmail,status,loggedUser.firstName,loggedUser.lastName)
+ console.log("test");
 
 connection.status = status
 

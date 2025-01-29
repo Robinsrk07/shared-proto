@@ -9,7 +9,7 @@ const SAFE_DATA =  ["firstName" ,"lastName","age","photoUrl","about","emailId","
 
 userRouter.get('/user/requests/received',userAuth,async(req,res)=>{
     try{
-        const loggedUser =  req.user
+        const loggedUser =  req.user 
         const connectionRequest =  await ConnectionRequestModel.find({
             receiverId:loggedUser._id,
             status:"interested"  

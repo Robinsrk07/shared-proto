@@ -67,6 +67,14 @@ const userSchema = new Schema({
         }
           
     },
+    isPremium:{
+        type:Boolean,
+        default :false
+    },
+    memberShipType:{
+        type: String
+    },
+    
 },{
         timeStamps:true
 

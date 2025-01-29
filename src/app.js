@@ -7,6 +7,9 @@ const profileRouter = require('./routes/profile')
 const reqRouter =require('./routes/requset')
 const userRouter = require('./routes/user')
 const cors = require("cors")
+const {startServer} = require("./gRpcServer")
+
+
 
 ConnectDb().then(()=>{
     console.log("database Connection succes");
@@ -17,6 +20,9 @@ ConnectDb().then(()=>{
     
 })
 
+require("./utils/RabitMq")
+require("./utils/CronJob")
+startServer()
 
 app.use(cors({
     origin:"http://localhost:5173",credentials:true
@@ -33,4 +39,4 @@ app.use((err, req, res, next) => {
     console.error(err);
     res.status(500).send("Something went wrong");
 });
-
+   

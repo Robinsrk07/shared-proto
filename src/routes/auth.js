@@ -70,7 +70,6 @@ authRouter.post('/login',async(req,res)=>{
 authRouter.post('/logout',async(req,res)=>{
      res.cookie("token",null,{expires:new Date(Date.now())}).send("user logged out")
     })
-module.exports = authRouter; 
 authRouter.post('/send-otp',(req,res)=>{
     const{email}= req.body
    try{ 
@@ -84,27 +83,29 @@ authRouter.post('/send-otp',(req,res)=>{
    
 })
 authRouter.post("/verify-otp", (req, res) => {
-    const { email, otp } = req.body;  // User's email and OTP submitted for verification
+    const { email, otp } = req.body;  
 
-    // Retrieve the OTP and expiry time from the store
+   
     const storedData = otpStore.get(email);
 
     if (!storedData) {
         return res.status(400).send("OTP not found or expired.");
     }
 
-    // Check if OTP has expired
+   
     if (Date.now() > storedData.expiry) {
-        otpStore.delete(email);  // Delete expired OTP
+        otpStore.delete(email);  
         return res.status(400).send("OTP has expired.");
     }
 
-    // Check if OTP matches
+    
     if (storedData.otp !== otp) {
         return res.status(400).send("Invalid OTP.");
     }
 
-    // OTP is valid and not expired
-    otpStore.delete(email);  // Delete OTP after successful verification
+   
+    otpStore.delete(email);  
     res.send("OTP verified successfully.");
 });
+
+module.exports = authRouter; 

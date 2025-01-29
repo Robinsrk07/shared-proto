@@ -1,19 +1,17 @@
 syntax = "proto3";
 
-
 package auth;
 
-message AuthRequest{
-    string token =1
+message AuthRequest {
+    string token = 1;
 }
 
-message AuthResponse{
-    bool authenticated =1
-    string message =2
+message AuthResponse {
+    bool authenticated = 1;
+    string message = 2;
+    string userId = 3; 
 }
 
-//service defenition
-
-service  AuthService {
-    rpc  AuthenticateUser (AuthRequest) returns (AuthResponse)
+service AuthService {
+    rpc AuthenticateUser (AuthRequest) returns (AuthResponse);
 }
